@@ -1,6 +1,6 @@
 # enter notes directory
-mkdir -p notes
-cd notes
+mkdir -p ~/Documents/todo
+cd ~/Documents/todo
 
 # initialize date to today
 date=$(date +%F)

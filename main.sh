@@ -28,9 +28,13 @@ while [[ $input != "q" ]]; do
     read input
     case $input in
         "c")
-            echo -n "Enter desired day: "
-            read input
-            date=$(date --date="$input" +%F)
+            exit_status="1"
+            while [[ $exit_status != "0" ]]; do
+                echo -n "Enter desired day: "
+                read input
+                date=$(date --date="$input" +%F)
+                exit_status=$(echo $?)
+            done
             ;;
         "a")
             echo -n ">>> "

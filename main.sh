@@ -47,7 +47,7 @@ while [[ $input != "q" ]]; do
             ;;
         "s")
             clear
-            if [ -z "$(ls -A .)" ]; then
+            if [ -z "$(ls .)" ]; then
                 echo "All tasks are complete!"
                 echo "Press enter to continue..."
                 read input

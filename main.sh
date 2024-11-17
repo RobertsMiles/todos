@@ -57,9 +57,9 @@ while [[ $input != "q" ]]; do
                 read input
                 continue
             fi
-            for date in *; do
-                date --date=$date '+%A, %B %d, %Y'
-                cat -n $date
+            for date_file in *; do
+                date --date=$date_file '+%A, %B %d, %Y'
+                cat -n $date_file
                 echo
             done
             echo "Press enter to continue..."

@@ -13,6 +13,9 @@ while [[ $input != "q" ]]; do
     clear
 
     # print selected date
+    if [[ $date == $(date +%F) ]]; then
+        printf "* "
+    fi
     date --date=$date '+%A, %B %d, %Y'
 
     # print selected date's tasks
@@ -58,6 +61,9 @@ while [[ $input != "q" ]]; do
                 continue
             fi
             for date_file in *; do
+                if [[ $date_file == $(date +%F) ]]; then
+                    printf "* "
+                fi
                 date --date=$date_file '+%A, %B %d, %Y'
                 cat -n $date_file
                 echo

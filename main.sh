@@ -1,3 +1,66 @@
+### function definitions ###
+
+# print selected date and its tasks
+print_date() {
+    local date=$1
+    
+    if [[ $date == $(date +%F) ]]; then
+        printf "* "
+    fi
+    date --date=$date '+%A, %B %d, %Y'
+    if [ -f $date ] ; then
+        cat -n $date
+    fi
+    echo
+}
+
+# changes the date being used
+change_day() {
+    exit_status="1"
+    while [[ $exit_status != "0" ]]; do
+        echo -n "Enter desired day: "
+        read input
+        date=$(date --date="$input" +%F)
+        exit_status=$(echo $?)
+    done
+}
+
+# adds a new task to the given date
+add_task() {
+    echo -n ">>> "
+    read input
+    echo $input >> $date
+}
+
+# removes a task from the given date
+remove_task() {
+    echo -n "Enter line number: "
+    read input
+    sed -i -e ${input}d $date
+
+    # if all tasks are removed, also delete the date entry
+    if [[ $(cat $date) == "" ]]; then
+        rm $date
+    fi
+}
+
+show_all_tasks() {
+    clear
+    if [ -z "$(ls .)" ]; then
+        echo "All tasks are complete!"
+    else
+        for date_file in *; do
+            print_date $date_file
+        done
+    fi
+    echo "Press enter to continue..."
+    read input
+}
+
+
+
+### main script ###
+
 # enter notes directory
 mkdir -p ~/Documents/todo
 cd ~/Documents/todo
@@ -5,68 +68,27 @@ cd ~/Documents/todo
 # initialize date to today
 date=$(date +%F)
 
-# main input loop
+# main program loop
 while [[ $input != "q" ]]; do
     clear
-
-    # print selected date
-    if [[ $date == $(date +%F) ]]; then
-        printf "* "
-    fi
-    date --date=$date '+%A, %B %d, %Y'
-
-    # print selected date's tasks
-    if [ ! -f $date ]; then
-        echo "Nothing to do!"
-    else
-        cat -n $date
-    fi
-    echo
+    print_date $date
 
     # user input
     echo -n "(c)hange day; (a)dd task; (r)emove task; (s)how all tasks; (q)uit: "
     read input
+
     case $input in
         "c")
-            exit_status="1"
-            while [[ $exit_status != "0" ]]; do
-                echo -n "Enter desired day: "
-                read input
-                date=$(date --date="$input" +%F)
-                exit_status=$(echo $?)
-            done
+            change_day
             ;;
         "a")
-            echo -n ">>> "
-            read input
-            echo $input >> $date
+            add_task
             ;;
         "r")
-            echo -n "Enter line number: "
-            read input
-            sed -i -e ${input}d $date
-            if [[ $(cat $date) == "" ]]; then
-                rm $date
-            fi
+            remove_task
             ;;
         "s")
-            clear
-            if [ -z "$(ls .)" ]; then
-                echo "All tasks are complete!"
-                echo "Press enter to continue..."
-                read input
-                continue
-            fi
-            for date_file in *; do
-                if [[ $date_file == $(date +%F) ]]; then
-                    printf "* "
-                fi
-                date --date=$date_file '+%A, %B %d, %Y'
-                cat -n $date_file
-                echo
-            done
-            echo "Press enter to continue..."
-            read input
+            show_all_tasks
             ;;
     esac
 done

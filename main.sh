@@ -2,9 +2,6 @@
 mkdir -p ~/Documents/todo
 cd ~/Documents/todo
 
-# start git
-git init
-
 # initialize date to today
 date=$(date +%F)
 
@@ -72,9 +69,5 @@ while [[ $input != "q" ]]; do
             read input
             ;;
     esac
-
-    # git commit
-    git add $date
-    git commit -m "automated"
 done
 clear

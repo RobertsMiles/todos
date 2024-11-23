@@ -65,16 +65,24 @@ show_all_tasks() {
     read input
 }
 
-# directory to store tasks
-set_directory() {
-    mkdir -p ~/.todos
-    cd ~/.todos
-}
-
 # gets users' choice
 get_choice() {
     printf "\033[31m(c)\033[0mhange day; \033[31m(a)\033[0mdd task; \033[31m(r)\033[0memove task; \033[31m(s)\033[0mhow all tasks; \033[31m(q)\033[0muit: "
     read input
+}
+
+# gets main directory from the config file,
+# if the config file does not exists,
+# prompt the user to enter a directory
+set_directory() {
+    if ! cat ~/.config/todos/directory.conf &>/dev/null; then
+        mkdir -p ~/.config/todos
+        printf "Enter directory to store todos: "
+        read directory
+        echo $directory > ~/.config/todos/directory.conf
+        mkdir -p $directory
+    fi
+    directory=$(cat ~/.config/todos/directory.conf)
 }
 
 
@@ -82,6 +90,7 @@ get_choice() {
 ### main script ###
 clear
 set_directory
+cd $directory
 date=$(date +%F)
 while [[ $input != "q" ]]; do
     print_day $date

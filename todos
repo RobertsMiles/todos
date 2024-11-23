@@ -2,14 +2,60 @@
 
 ### function definitions ###
 
+# calculates how many days from now a date is
+days_from_now() {
+    # get dates
+    local today=$(date +%F)
+    local date=$1
+    
+    # get year of each date
+    local year_today=$(date +%Y)
+    local year_date=$(date --date=$date +%Y)
+
+    # difference of years
+    local year_diff=$(( year_date - year_today ))
+
+    # get day of the year for each date
+    local day_today=$(date --date=$today +%j)
+    local day_date=$(date --date=$date +%j)
+
+    # find min/max year
+    local min_year max_year direction_from_today
+    if (( year_today < year_date )); then
+        direction_from_today=1
+        min_year=$year_today
+        max_year=$year_date
+    else
+        direction_from_today=-1
+        max_year=$year_today
+        min_year=$year_date
+    fi
+
+    # find leap days
+    local leap_days=0
+    for (( i = min_year ; i < max_year ; i++ )); do
+        if (( !(i % 4) && (i % 100) )); then
+            leap_days=$(( leap_days + direction_from_today ))
+        fi
+    done
+
+    # put day_date in terms of year_today
+    day_date=$(( day_date + $(( 365 * year_diff )) + leap_days )) 
+
+    # get difference of days
+    diff=$(( day_date - day_today ))
+}
+
 # print selected date and its tasks
 print_day() {
     local date=$1
     
-    if [[ $date == $(date +%F) ]]; then
-        printf "* "
-    fi
-    printf "\033[36m"
+    #if [[ $date == $(date +%F) ]]; then
+    #    printf "* "
+    #fi
+    days_from_now $date
+    printf "%3s " $diff
+    printf "\033[32m"
     date --date=$date '+%A, %B %d, %Y'
     printf "\033[0m"
     

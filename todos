@@ -48,27 +48,39 @@ days_from_now() {
 
 # print selected date and its tasks
 print_day() {
-    local date=$1
-    
-    #if [[ $date == $(date +%F) ]]; then
-    #    printf "* "
-    #fi
-    days_from_now $date
+    local day=$1
+
+    days_from_now $day
     printf "%3s " $diff
-    printf "\033[32m"
-    date --date=$date '+%A, %B %d, %Y'
+    
+    if [[ $day == $date ]]; then
+        printf "\033[31m"
+    else
+        printf "\033[32m"
+    fi
+    date --date=$day '+%A, %B %d, %Y'
     printf "\033[0m"
     
-    if [ -f $date ] ; then
-        printf "\033[0m"
-        cat -n $date
+    if [ -f $day ] ; then
+        if [[ $day == $date ]]; then
+            printf "\033[90m"
+        fi
+        cat -n $day
         printf "\033[0m"
     fi
     echo
 }
 
-# changes the date being used
+# deletes the currently selected date file if it is empty
+delete_empty_date() {
+    if [[ $(cat $date) == "" ]]; then
+        rm $date
+    fi
+}
+
+# changes the selected date
 change_day() {
+    delete_empty_date
     exit_status="1"
     while [[ $exit_status != "0" ]]; do
         echo -n "Enter desired day: "
@@ -76,6 +88,7 @@ change_day() {
         date=$(date --date="$input" +%F)
         exit_status=$(echo $?)
     done
+    touch $date
 }
 
 # adds a new task to the given date
@@ -90,16 +103,10 @@ remove_task() {
     echo -n "Enter line number: "
     read input
     sed -i -e ${input}d $date
-
-    # if all tasks are removed, also delete the date entry
-    if [[ $(cat $date) == "" ]]; then
-        rm $date
-    fi
 }
 
 # print all tasks
 show_all_tasks() {
-    clear
     if [ -z "$(ls .)" ]; then
         echo "All tasks are complete!"
     else
@@ -107,13 +114,17 @@ show_all_tasks() {
             print_day $date_file
         done
     fi
-    printf "\033[35mPress enter to continue...\033[0m"
-    read input
+    #printf "\033[34mPress enter to continue...\033[0m"
+    #read input
 }
 
 # gets users' choice
 get_choice() {
-    printf "\033[35m(c)\033[0mhange day; \033[35m(a)\033[0mdd task; \033[35m(r)\033[0memove task; \033[35m(s)\033[0mhow all tasks; \033[35m(q)\033[0muit: "
+    printf "\033[34m(c)\033[0mhange day; "
+    printf "\033[34m(a)\033[0mdd task; "
+    printf "\033[34m(r)\033[0memove task; "
+    #printf "\033[34m(s)\033[0mhow all tasks; "
+    printf "\033[34m(q)\033[0muit: "
     read input
 }
 
@@ -139,7 +150,8 @@ set_directory
 cd $directory
 date=$(date +%F)
 while [[ $input != "q" ]]; do
-    print_day $date
+    #print_day $date
+    show_all_tasks
     get_choice
     case $input in
         "c")
@@ -151,9 +163,9 @@ while [[ $input != "q" ]]; do
         "r")
             remove_task
             ;;
-        "s")
-            show_all_tasks
-            ;;
+        #"s")
+        #    show_all_tasks
+        #    ;;
     esac
     clear
 done

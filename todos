@@ -3,7 +3,7 @@
 ### function definitions ###
 
 # print selected date and its tasks
-print_date() {
+print_day() {
     local date=$1
     
     if [[ $date == $(date +%F) ]]; then
@@ -46,39 +46,39 @@ remove_task() {
     fi
 }
 
+# print all tasks
 show_all_tasks() {
     clear
     if [ -z "$(ls .)" ]; then
         echo "All tasks are complete!"
     else
         for date_file in *; do
-            print_date $date_file
+            print_day $date_file
         done
     fi
     echo "Press enter to continue..."
     read input
 }
 
+# directory to store tasks
+set_directory() {
+    mkdir -p ~/.todos
+    cd ~/.todos
+}
+
+get_choice() {
+    echo -n "(c)hange day; (a)dd task; (r)emove task; (s)how all tasks; (q)uit: "
+    read input
+}
+
 
 
 ### main script ###
-
-# enter notes directory
-mkdir -p ~/Documents/todo
-cd ~/Documents/todo
-
-# initialize date to today
+set_directory
 date=$(date +%F)
-
-# main program loop
 while [[ $input != "q" ]]; do
-    clear
-    print_date $date
-
-    # user input
-    echo -n "(c)hange day; (a)dd task; (r)emove task; (s)how all tasks; (q)uit: "
-    read input
-
+    print_day $date
+    get_choice
     case $input in
         "c")
             change_day
@@ -93,5 +93,5 @@ while [[ $input != "q" ]]; do
             show_all_tasks
             ;;
     esac
+    clear
 done
-clear

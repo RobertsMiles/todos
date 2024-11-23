@@ -107,13 +107,13 @@ show_all_tasks() {
             print_day $date_file
         done
     fi
-    printf "\033[31mPress enter to continue...\033[0m"
+    printf "\033[35mPress enter to continue...\033[0m"
     read input
 }
 
 # gets users' choice
 get_choice() {
-    printf "\033[31m(c)\033[0mhange day; \033[31m(a)\033[0mdd task; \033[31m(r)\033[0memove task; \033[31m(s)\033[0mhow all tasks; \033[31m(q)\033[0muit: "
+    printf "\033[35m(c)\033[0mhange day; \033[35m(a)\033[0mdd task; \033[35m(r)\033[0memove task; \033[35m(s)\033[0mhow all tasks; \033[35m(q)\033[0muit: "
     read input
 }
 

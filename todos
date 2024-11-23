@@ -66,6 +66,7 @@ set_directory() {
     cd ~/.todos
 }
 
+# gets users' choice
 get_choice() {
     echo -n "(c)hange day; (a)dd task; (r)emove task; (s)how all tasks; (q)uit: "
     read input
@@ -74,6 +75,7 @@ get_choice() {
 
 
 ### main script ###
+clear
 set_directory
 date=$(date +%F)
 while [[ $input != "q" ]]; do

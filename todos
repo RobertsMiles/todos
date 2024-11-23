@@ -9,9 +9,14 @@ print_day() {
     if [[ $date == $(date +%F) ]]; then
         printf "* "
     fi
+    printf "\033[36m"
     date --date=$date '+%A, %B %d, %Y'
+    printf "\033[0m"
+    
     if [ -f $date ] ; then
+        printf "\033[0m"
         cat -n $date
+        printf "\033[0m"
     fi
     echo
 }
@@ -56,7 +61,7 @@ show_all_tasks() {
             print_day $date_file
         done
     fi
-    echo "Press enter to continue..."
+    printf "\033[31mPress enter to continue...\033[0m"
     read input
 }
 
@@ -68,7 +73,7 @@ set_directory() {
 
 # gets users' choice
 get_choice() {
-    echo -n "(c)hange day; (a)dd task; (r)emove task; (s)how all tasks; (q)uit: "
+    printf "\033[31m(c)\033[0mhange day; \033[31m(a)\033[0mdd task; \033[31m(r)\033[0memove task; \033[31m(s)\033[0mhow all tasks; \033[31m(q)\033[0muit: "
     read input
 }
 

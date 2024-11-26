@@ -3,10 +3,11 @@
 #include <string.h>
 #include "strings.h"
 
-char *get_string(FILE *stream) {
-    char *string, *buffer;
+void set_string(FILE *stream, char* string) {
+    string = NULL;
+    char *buffer;
 
-    string = malloc(sizeof(char));
+    //string = realloc(string, sizeof(char));
     buffer = malloc(sizeof(char));
 
     if (stream == stdin) fflush(stdin);
@@ -25,6 +26,4 @@ char *get_string(FILE *stream) {
     string[i] = '\0';
 
     free(buffer);
-
-    return string;
 }

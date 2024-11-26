@@ -24,38 +24,35 @@ void set_current_date(char* date) {
 
 // Formats the user's date selection into yyyy-mm-dd.
 // Returns 0 if successful, otherwise non-zero.
-char* get_date(char* choice) {
+void set_date(char *choice, char *date) {
     char command_in[64] = {'\0'}; // TODO replace strcat() with dynamic alternative to avoid potential buffer overflows
     strcat(command_in, "date --date='");
     strcat(command_in, choice);
     strcat(command_in, "' +%F");
     FILE* command_out = popen(command_in, "r");
     //fgets(date, 16, command_out);
-    printf("get_string(command_out)");
-    char* date = get_string(command_out);
-    if (pclose(command_out)) return NULL;
-    return date;
+    printf("set_string(command_out)");
+    set_string(command_out, date);
+    if (pclose(command_out)) date = NULL;
 }
 
-char *choose_date() {
-    char *date = NULL;
-    while (date == NULL) {
+void choose_date(char *date) {
+    char *choice = NULL;
+    while (choice == NULL) {
         printf("Date: ");
         //fflush(stdin);
         while ((getchar()) != '\n');
-        char *choice = get_string(stdin);
-        date = get_date(choice);
+        set_string(stdin, choice);
+        set_date(choice, date);
     }
-    return date;
 }
 
-char* evaluate_choice(char choice) {
+void evaluate_choice(char choice, char *date) {
     switch (choice) {
-        case 'c': return choose_date();
+        case 'c': choose_date(date);
         //case 'a': add_task(date); break;
         //case 'e': edit_task(date); break;
         //case 'r': remove_date(date); break;
-        default: return get_date("today");
     }
 }
 
@@ -68,9 +65,9 @@ void print_options() {
 }
 
 // TODO replace excessive bash
-void set_path() {
+void configure_path(char *path) {
     printf("Enter directory to store todos: ");
-    char* path = get_string(stdin);
+    set_string(stdin, path);
 
     char command_in[2048] = {'\0'}; // TODO replace strcat() with dynamic alternative to avoid potential buffer overflows
     strcat(command_in, "echo '");
@@ -81,10 +78,10 @@ void set_path() {
     system(command_in);
 }
 
-char* get_path() {
+void set_path(char *path) {
     FILE* path_stream = fopen("~/.config/todos/directory.conf", "r");
-    //if (path_stream == NULL) set_path();
-    return get_string(path_stream);
+    //if (path_stream == NULL) configure_path();
+    set_string(path_stream, path);
 }
 
 /*
@@ -97,11 +94,13 @@ char get_char(FILE *stream) {
 */
 
 int main() {
-    char *date, choice = '\0';
-    //char* path = get_path();
+    char *date, *path, choice = '\0';
+    //set_path(date);
     //printf("%s\n", path);
 
-    date = get_date("today");
+    set_date("today", date);
+
+    return -1;
 
     while (choice != 'q') {
         //clear_screen();
@@ -110,7 +109,7 @@ int main() {
         //choice = get_char(stdin);
         choice = getc(stdin);
         //fflush(stdin);
-        date = evaluate_choice(choice);
+        evaluate_choice(choice, date);
     }
 
     clear_screen();

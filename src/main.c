@@ -24,31 +24,38 @@ void set_current_date(char* date) {
 
 // Formats the user's date selection into yyyy-mm-dd.
 // Returns 0 if successful, otherwise non-zero.
-int set_date(char* date, char* choice) {
+char* get_date(char* choice) {
     char command_in[64] = {'\0'}; // TODO replace strcat() with dynamic alternative to avoid potential buffer overflows
     strcat(command_in, "date --date='");
     strcat(command_in, choice);
     strcat(command_in, "' +%F");
     FILE* command_out = popen(command_in, "r");
-    fgets(date, 16, command_out);
-    return pclose(command_out);
+    //fgets(date, 16, command_out);
+    printf("get_string(command_out)");
+    char* date = get_string(command_out);
+    if (pclose(command_out)) return NULL;
+    return date;
 }
 
-void choose_date(char* date) {
-    int validity = -1;
-    while (validity) {
+char *choose_date() {
+    char *date = NULL;
+    while (date == NULL) {
         printf("Date: ");
-        char *choice = get_string();
-        validity = set_date(date, choice);
+        //fflush(stdin);
+        while ((getchar()) != '\n');
+        char *choice = get_string(stdin);
+        date = get_date(choice);
     }
+    return date;
 }
 
-void evaluate_choice(char choice, char* date) {
+char* evaluate_choice(char choice) {
     switch (choice) {
-        case 'c': choose_date(date); break;
+        case 'c': return choose_date();
         //case 'a': add_task(date); break;
         //case 'e': edit_task(date); break;
         //case 'r': remove_date(date); break;
+        default: return get_date("today");
     }
 }
 
@@ -63,7 +70,7 @@ void print_options() {
 // TODO replace excessive bash
 void set_path() {
     printf("Enter directory to store todos: ");
-    char* path = get_string();
+    char* path = get_string(stdin);
 
     char command_in[2048] = {'\0'}; // TODO replace strcat() with dynamic alternative to avoid potential buffer overflows
     strcat(command_in, "echo '");
@@ -75,24 +82,35 @@ void set_path() {
 }
 
 char* get_path() {
-    FILE* path_file = fopen("~/.config/todos/directory.conf", "r");
-    if (path_file == NULL) set_path();
-    return NULL;
+    FILE* path_stream = fopen("~/.config/todos/directory.conf", "r");
+    //if (path_stream == NULL) set_path();
+    return get_string(path_stream);
 }
 
-int main() {
-    char date[16], choice = '\0';
-    //char* path = get_path();
+/*
+char get_char(FILE *stream) {
+    //fprintf(stdin, "bbbsdbsdgbdgbsdgb");
+    //while ((getchar()) != '\n');
+    return getc(stream);
+    fflush(stream);
+}
+*/
 
-    set_date(date, "today");
+int main() {
+    char *date, choice = '\0';
+    //char* path = get_path();
+    //printf("%s\n", path);
+
+    date = get_date("today");
 
     while (choice != 'q') {
-        clear_screen();
-        printf("%s", date);//print_dates();
+        //clear_screen();
+        printf("%s\n\n", date);//print_dates();
         print_options();
+        //choice = get_char(stdin);
         choice = getc(stdin);
-        //scanf(" %c", NULL); // silly
-        evaluate_choice(choice, date);
+        //fflush(stdin);
+        date = evaluate_choice(choice);
     }
 
     clear_screen();

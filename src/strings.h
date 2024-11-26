@@ -1,2 +1,2 @@
 // Returns a dynamically allocated string constructed from stdin.
-char *get_string();
+char *get_string(FILE *stream);

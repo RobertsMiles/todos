@@ -69,19 +69,27 @@ void configure_path(char *path) {
     printf("Enter directory to store todos: ");
     set_string(stdin, path);
 
+    system("mkdir -p ~/.config/todos");
+
     char command_in[2048] = {'\0'}; // TODO replace strcat() with dynamic alternative to avoid potential buffer overflows
     strcat(command_in, "echo '");
     strcat(command_in, path);
     strcat(command_in, "' > ~/.config/todos/directory.conf");
 
-    system("mkdir -p ~/.config/todos");
     system(command_in);
 }
 
-void set_path(char *path) {
-    FILE* path_stream = fopen("~/.config/todos/directory.conf", "r");
-    //if (path_stream == NULL) configure_path();
+void set_path(char *username, char *path) {
+    //path = realloc(path, sizeof(char) * 99);
+    char command_in[2048] = {'\0'};
+    strcat(command_in, "/home/");
+    strcat(command_in, username);
+    strcat(command_in, "/.config/todos/directory.conf");
+
+    FILE* path_stream = fopen(command_in, "r");
+    if (path_stream == NULL) configure_path(path);
     set_string(path_stream, path);
+    fclose(path_stream);
 }
 
 /*
@@ -94,13 +102,20 @@ char get_char(FILE *stream) {
 */
 
 int main() {
-    char *date, *path, choice = '\0';
-    //set_path(date);
-    //printf("%s\n", path);
+    char choice = '\0';
+    char *date = malloc(sizeof(char));
+    char *path = malloc(sizeof(char));
+    char *username = "user";
+    
+    printf("%s", username);
 
-    set_date("today", date);
+    set_path(username, path);
+    printf("%s\n", path);
 
-    return -1;
+    //set_date("today", date);
+    printf("%s", date);
+
+    return 0;
 
     while (choice != 'q') {
         //clear_screen();
@@ -113,6 +128,9 @@ int main() {
     }
 
     clear_screen();
+
+    free(date);
+    free(path);
 
     return 0;
 }

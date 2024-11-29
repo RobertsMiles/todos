@@ -4,16 +4,18 @@
 #include "strings.h"
 
 void set_string(FILE *stream, char* string) {
-    string = NULL;
+    //string = NULL;
     char *buffer;
+
+    //strcpy(string, "a");
 
     //string = realloc(string, sizeof(char));
     buffer = malloc(sizeof(char));
 
     if (stream == stdin) fflush(stdin);
-
     int i = 0;
     while (1) {
+        printf("%c", getc(stream));
         string[i] = getc(stream);
         //scanf("%c", &string[i]);
         if (string[i] == '\n' || string[i] == '\0') break;

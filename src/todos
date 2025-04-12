@@ -7,7 +7,7 @@ days_from_now() {
     # get dates
     local today=$(date +%F)
     local date=$1
-    
+
     # get year of each date
     local year_today=$(date +%Y)
     local year_date=$(date --date=$date +%Y)
@@ -105,6 +105,15 @@ remove_task() {
     sed -i -e ${input}d $date
 }
 
+# gets users' choice
+get_choice() {
+    printf "\033[34m(c)\033[0mhoose date; "
+    printf "\033[34m(a)\033[0mdd task; "
+    printf "\033[34m(r)\033[0memove task; "
+    printf "\033[34m(q)\033[0muit: "
+    read input
+}
+
 # print all tasks
 show_all_tasks() {
     if [ -z "$(ls .)" ]; then
@@ -114,41 +123,17 @@ show_all_tasks() {
             print_day $date_file
         done
     fi
-    #printf "\033[34mPress enter to continue...\033[0m"
-    #read input
-}
-
-# gets users' choice
-get_choice() {
-    printf "\033[34m(c)\033[0mhange day; "
-    printf "\033[34m(a)\033[0mdd task; "
-    printf "\033[34m(r)\033[0memove task; "
-    #printf "\033[34m(s)\033[0mhow all tasks; "
-    printf "\033[34m(q)\033[0muit: "
-    read input
-}
-
-# gets main directory from the config file,
-# if the config file does not exists,
-# prompt the user to enter a directory
-set_directory() {
-    if ! cat ~/.config/todos/directory.conf &>/dev/null; then
-        mkdir -p ~/.config/todos
-        printf "Enter directory to store todos: "
-        read directory
-        echo $directory > ~/.config/todos/directory.conf
-        mkdir -p $directory
-    fi
-    directory=$(cat ~/.config/todos/directory.conf)
 }
 
 
 
 ### main script ###
 clear
-set_directory
+directory="/home/user/.local/share/todos/"
+mkdir -p $directory
 cd $directory
 date=$(date +%F)
+touch $date
 while [[ $input != "q" ]]; do
     #print_day $date
     show_all_tasks
